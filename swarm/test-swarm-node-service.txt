@@ -1,0 +1,47 @@
+links : 
+- https://get.docker.com/
+- http://play-with-docker.com
+
+
+- Docker Service 
+- Node 
+
+- Docker Swarm
+
+- Node joined on swarm as worker // or as manager
+
+##########Docker SWARM#########
+
+
+    $  docker swarm init --advertise-addr 192.168.0.23
+//Swarm initialized: current node (owo73pda01awp1iefsdn8belh) is now a manager
+
+--> node2 $ docker swarm join --token SWMTKN-1-0tkmti8mq07vfpfv8w4eoll459xiqj8jn5ttb620b9edrlyu6n-bmnrstlj33xvw8zz0oea8o6v5 192.168.0.23:2377
+//This node joined a swarm as a worker.
+
+    $  docker node ls
+
+    $  docker node update --role manager node2
+
+--> node3 $ docker swarm join --token ...
+
+    $  docker swarm join-token manager
+//This node joined a swarm as a worker.
+
+
+####
+
+$docker service create  --replicas 3 alpine ping 8.8.8.8
+$docker service ls
+
+############################
+
+[node1] (local) root@192.168.0.23 ~
+$ docker service ps silly_chatelet
+ID                  NAME                IMAGE               NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
+5o9r33fpyxhn        silly_chatelet.1    alpine:latest       node3               Running             Running 39 seconds ago
+f1abppr6csws        silly_chatelet.2    alpine:latest       node1               Running             Running 39 seconds ago
+fq1pev11ixpz        silly_chatelet.3    alpine:latest       node2               Running             Running 39 seconds ago
+############################
+
+
