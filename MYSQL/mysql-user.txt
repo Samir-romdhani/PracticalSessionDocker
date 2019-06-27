@@ -1,0 +1,8 @@
+MYSQL - AVANCED
+
+
+Creating new mysql user: https://bytes.com/topic/mysql/answers/614815-creating-new-mysql-user
+
+https://stackoverflow.com/questions/30692812/mysql-user-db-does-not-have-password-columns-installing-mysql-on-osx
+
+
