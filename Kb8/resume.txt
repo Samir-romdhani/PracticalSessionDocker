@@ -1,0 +1,122 @@
+#############################################
+
+Masters & Nodes : principaux bits d'infra
+Pods & Services :
+Deployements --> YAML file
+
+
+### Masters ###
+1 -	Clusetr store
+			
+			* Cluster state and config
+			* Uses etcd(developé par CoreOS) : 
+			* Utilise etc. d comme source de verité pour le cluster
+Nb : pas de etcd ou cluster store -> pas de cluster
+2 -	apiserver : a.k.a Master
+			L'apiserver est le cerveau du cluster		
+			* Expose the Api REST
+			* Consules JSON
+
+3 -	Controller Manager
+			* Node Controller
+4 -	Scheduler
+			* Surveille les nouveaux pods(watches apiserver for new pods)
+			* les assigne au travailleurs(assigns work to nodes)
+
+
+
+==> juste apiserver le composant qui expose endpoint pour nous, cela le fait sur 443 (auth & commands via kubectl qui sont formaté en JSON)
+Il y a une conversation entre tous les composants et selon se qui se passe les commandes kubectl et les elements d'actions se dirigent vers les noeuds .. pods
+
+
+
+### Nodes ###
+Passed Minute 3.00 ->   https://app.pluralsight.com/player?name=getting-started-kubernetes-m3&mode=live&clip=3&course=getting-started-kubernetes&author=nigel-poulton
+##############################################################
+
+Nodes appelé aussi "Minions" : the k8s Workers
+
+
+1 - Kubelet
+2 - Container Runtime : Container Engine
+3 - Kube Proxy
+
+############################
+1 - Kubelet
+
+Kublet : L'agent principale du k8s sur le noeud : c'est un noeud
+
+ 
+- Il enregistre l'hote en tant que Noeud dans le cluster k8s Puis IL surveille l'api server pour les affectations du travail (Watches apiserver)
+- Instantiates Pods
+- Reports back to master
+* Si un pod echoue sur un noeud , Kublet n'est pas le responsable de nle redamarer ou de trouver un autre noeud -> il envoi l'etat au master
+
+Kublet expose un noeud final sur l'hote local sur le port 10255
+
+Kublet doit fonctionner avec un env d'exec de conteneur(Container Runtime) pour effectuer les taches.
+
+
+2 - Container Runtime : Container Engine
+
+a - pulling images 
+b - stop/start containers
+
+Container Runtime va etre Docker ou rkt CoreOS(a voir)
+
+2 - Kube-proxy : cerveau du reseau du noeud
+   *	chaque pods obtient ca propre adresse : un ip par pod
+   *	All containers in a pod share a single IP
+   *	Load balances across all pods in a service
+
+
+Nb : Kubelet comme j'ai mentionné precedemant c'est l'agent principal du k8s sur les noeud en effet :
+- Il enregistre le noeud sur le cluster (main : apiserver)
+- puis il surveille l'apiserver 
+
+Recap
+- Kubelet : Main k8s agent
+- Container Engine : Docker or rkt
+- Kube-proxy : K8s Networking
+
+
+############  Les services de pod et le deploy ##########
+
+- I Pods	: L'unité atomique de déploiement du K8s
+			COMME : VMware -> virtual machine
+				Docker -> Containers
+				k8s -> Pod
+
+- II Service : Stable networking 
+
+
+###################
+Every node (master and minions) needs :
+- Docker (rkt) -> cONTAINER rUNTIME
+- Kubelet -> Agent du noeud K8s
+- Kubradm -> Build le cluster
+- Kubectl -> Client
+- CNI -> prie en charge le réseau CNI
+
+
+PLan 
+
+Intialiser un nouveau cluster
+Creer un reseau de recouvrement pour les pods
+Ajoutons des noeud de travail
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

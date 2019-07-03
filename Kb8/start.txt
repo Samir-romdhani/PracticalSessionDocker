@@ -1,0 +1,12 @@
+
+
+About K8s
+
+1 -	Born in Google
+2 -	K8s est un projet au code source ouvert (open source) offert à la Cloud Native Computing Foundation (CNCF) en 2015
+3 -	Developpé par Go/Golang
+4 -	Elle a été inspirée par divers projets de recherches et solutions internes de Google : principalement Borg et Omega
+5 -	DNA from Borg and Omega
+
+
+

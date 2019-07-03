@@ -1,3 +1,9 @@
+########################### Ressources #######################
+1 - https://www.quantmetry.com/etat-de-lart-kubernetes-k8s-mi-2018/
+2 - https://www.pluralsight.com/courses/getting-started-kubernetes
+
+##############################
+
 links : 
 - https://hackernoon.com/kubernetes-vs-docker-swarm-a-comprehensive-comparison-73058543771e
 - https://pbs.twimg.com/media/D9XcD3YWsAA_tXZ.png:large
