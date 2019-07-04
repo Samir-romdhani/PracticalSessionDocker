@@ -1,0 +1,281 @@
+#####################        Start   I      #################################
+
+
+1-	https://kubernetes.io/docs/tutorials/kubernetes-basics/
+2-	https://web.leikir.io/introduction-a-kubernetes/
+###########################################################################
+    4  kubectl get pods
+    5  kubectl get services
+    6  kubectl expose deployment/kubernetes-bootcamp --type="NodePort" --port 8080
+    7  kubectl get services
+    8  kubectl describe services/kubernetes-bootcamp
+    9  curl $(minikube ip):$NODE_PORT
+   10  kubectl describe services/kubernetes-bootcamp
+   11  kubectl get services
+   12  export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template='{{(index .spec.ports 0).nodePort}}')
+   13  echo NODE_PORT=$NODE_PORT
+   14  kubectl get services
+   15  curl $(minikube ip):$NODE_PORT
+   16  echo $(minikube ip):$NODE_PORT
+   17  curl $(minikube ip):$NODE_PORT
+   18  kubectl get services
+   19  kubectl describe services/kubernetes-bootcamp
+   20  kubectl get services
+   21  kubectl describe deployment
+   22  kubectl get pods -l run=kubernetes-bootcamp
+   23  kubectl get pods
+   24  export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+   25  echo Name of the Pod: $POD_NAME
+   26  export POD_NAME=$(kubectl get pods -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+   27  echo Name of the Pod: $POD_NAME
+   28  kubectl label pod $POD_NAME app=v1
+   29  kubectl describe deployment
+   30  kubectl get pods -l app=v1
+   31  kubectl label pod $POD_NAME app=v1
+   32  kubectl describe pods $POD_NAME
+
+#####################        Start   II      #################################
+apres kubectl run deployement/....   sur 8001
+
+apres kubectl prox ....... runnning
+
+curl http://localhost:8001/version    
+---> 
+					{
+					  "major": "1",
+					  "minor": "15",
+					  "gitVersion": "v1.15.0",
+					  "gitCommit": "e8462b5b5dc2584fdcd18e6bcfe9f1e4d970a529",
+					  "gitTreeState": "clean",
+					  "buildDate": "2019-06-19T16:32:14Z",
+					  "goVersion": "go1.12.5",
+					  "compiler": "gc",
+					  "platform": "linux/amd64"
+					}
+
+-	curl http://localhost:8001/api/v1/namespaces/default/pods/$POD_NAME/proxy/
+
+-->   Hello Kubernetes bootcamp! | Running on: kubernetes-bootcamp-5b48cfdcbd-j458m | v=1
+
+
+*	kubectl get - list resources
+*	kubectl describe - show detailed information about a resource
+*	kubectl logs - print the logs from a container in a pod
+*	kubectl exec - execute a command on a container in a pod
+
+
+
+	kubectl get pods
+--> 
+NAME                                   READY   STATUS    RESTARTS   AGE
+kubernetes-bootcamp-5b48cfdcbd-nxg9s   1/1     Running   0          11s
+
+-	kubectl logs $POD_NAME
+
+
+
+-	kubectl exec $POD_NAME env
+-->
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+HOSTNAME=kubernetes-bootcamp-5b48cfdcbd-nxg9s
+KUBERNETES_SERVICE_PORT_HTTPS=443
+KUBERNETES_PORT=tcp://10.96.0.1:443
+KUBERNETES_PORT_443_TCP=tcp://10.96.0.1:443
+KUBERNETES_PORT_443_TCP_PROTO=tcp
+KUBERNETES_PORT_443_TCP_PORT=443
+KUBERNETES_PORT_443_TCP_ADDR=10.96.0.1
+KUBERNETES_SERVICE_HOST=10.96.0.1
+KUBERNETES_SERVICE_PORT=443
+NPM_CONFIG_LOGLEVEL=info
+NODE_VERSION=6.3.1
+HOME=/root
+
+
+-	kubectl exec -ti $POD_NAME bash
+--> root@kubernetes-bootcamp-5b48cfdcbd-nxg9s:/#
+
+-	root@kubernetes-bootcamp-5b48cfdcbd-nxg9s:/# curl localhost:8080
+--> Hello Kubernetes bootcamp! | Running on: kubernetes-bootcamp-5b48cfdcbd-nxg9s | v=1
+
+
+
+###############
+
+$	kubectl get pods
+-->
+NAME                                   READY   STATUS    RESTARTS   AGE
+kubernetes-bootcamp-5b48cfdcbd-jcxrp   1/1     Running   0          20s
+
+
+$	kubectl get services
+-->
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   40s
+
+
+$	kubectl expose deployment/kubernetes-bootcamp --type="NodePort" --port 8080
+-->
+service/kubernetes-bootcamp exposed
+
+$	kubectl get services
+-->
+NAME                  TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+kubernetes            ClusterIP   10.96.0.1      <none>        443/TCP          2m1s
+kubernetes-bootcamp   NodePort    10.105.247.9   <none>        8080:31035/TCP   28s
+
+
+$	kubectl describe services/kubernetes-bootcamp
+-->
+					Name:                     kubernetes-bootcamp
+					Namespace:                default
+					Labels:                   run=kubernetes-bootcamp
+					Annotations:              <none>
+					Selector:                 run=kubernetes-bootcamp
+					Type:                     NodePort
+					IP:                       10.105.247.9
+					Port:                     <unset>  8080/TCP
+					TargetPort:               8080/TCP
+					NodePort:                 <unset>  31035/TCP
+					Endpoints:                172.18.0.4:8080
+					Session Affinity:         None
+					External Traffic Policy:  Cluster
+					Events:                   <none>
+
+
+$	export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template='{{(index .spec.ports 0).nodePort}}')$ 	  echo NODE_PORT=$NODE_PORT
+-->
+NODE_PORT=31035
+
+
+$	echo $(minikube ip):$NODE_PORT
+-->	172.17.0.122:31035
+
+$	curl $(minikube ip):$NODE_PORT
+--> 	Hello Kubernetes bootcamp! | Running on: kubernetes-bootcamp-5b48cfdcbd-jcxrp | v=1
+
+
+
+$	kubectl describe deployment
+-->
+					Name:                   kubernetes-bootcamp
+					Namespace:              default
+					CreationTimestamp:      Thu, 04 Jul 2019 13:26:01 +0000
+					Labels:                 run=kubernetes-bootcamp
+					Annotations:            deployment.kubernetes.io/revision: 1
+					Selector:               run=kubernetes-bootcamp
+					Replicas:               1 desired | 1 updated | 1 total | 1 available | 0 unavailable
+					StrategyType:           RollingUpdate
+					MinReadySeconds:        0
+					RollingUpdateStrategy:  25% max unavailable, 25% max surge
+					Pod Template:
+					  Labels:  run=kubernetes-bootcamp
+					  Containers:
+					   kubernetes-bootcamp:
+					    Image:        gcr.io/google-samples/kubernetes-bootcamp:v1
+					    Port:         8080/TCP
+					    Host Port:    0/TCP
+					    Environment:  <none>
+					    Mounts:       <none>
+					  Volumes:        <none>
+					Conditions:
+					  Type           Status  Reason
+					  ----           ------  ------
+					  Available      True    MinimumReplicasAvailable
+					  Progressing    True    NewReplicaSetAvailable
+					OldReplicaSets:  <none>
+					NewReplicaSet:   kubernetes-bootcamp-5b48cfdcbd (1/1 replicas created)
+					Events:
+					  Type    Reason             Age    From                   Message
+					  ----    ------             ----   ----                   -------
+					  Normal  ScalingReplicaSet  5m43s  deployment-controller  Scaled up replica set kubernetes-bootcamp-5b48cfdcbd to 1
+
+
+
+
+
+$	kubectl get pods -l run=kubernetes-bootcamp
+-->
+					NAME                                   READY   STATUS    RESTARTS   AGE
+					kubernetes-bootcamp-5b48cfdcbd-jcxrp   1/1     Running   0          6m35s
+
+
+
+
+$	kubectl get services -l run=kubernetes-bootcamp
+-->
+					NAME                  TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+					kubernetes-bootcamp   NodePort   10.105.247.9   <none>        8080:31035/TCP   5m41s
+
+$	kubectl label pod $POD_NAME app=v1
+....
+$	kubectl describe pods $POD_NAME
+					Name:           kubernetes-bootcamp-5b48cfdcbd-jcxrp
+					Namespace:      default
+					Priority:       0
+					Node:           minikube/172.17.0.122
+					Start Time:     Thu, 04 Jul 2019 13:26:08 +0000
+					Labels:         app=v1
+							pod-template-hash=5b48cfdcbd
+							run=kubernetes-bootcamp
+					Annotations:    <none>
+					Status:         Running
+					IP:             172.18.0.4
+					Controlled By:  ReplicaSet/kubernetes-bootcamp-5b48cfdcbd
+					Containers:
+					  kubernetes-bootcamp:
+					    Container ID:   docker://e2d3cc32f4bbfdf67982f2870b4472549b8bcae36326553ff6c9971f9c953de0
+					    Image:          gcr.io/google-samples/kubernetes-bootcamp:v1    Image ID:       docker-pullable://jocatalin/kubernetes-bootcamp@sha256:0d6b8ee63bb57c5f5b6156f446b3bc3b3c143d233037f3a2f00e279c8fcc64af    Port:           8080/TCP
+					    Host Port:      0/TCP
+					    State:          Running
+					      Started:      Thu, 04 Jul 2019 13:26:22 +0000
+					    Ready:          True
+					    Restart Count:  0
+					    Environment:    <none>
+					    Mounts:
+					      /var/run/secrets/kubernetes.io/serviceaccount from default-token-qkrl8 (ro)
+					Conditions:
+					  Type              Status
+					  Initialized       True
+					  Ready             True
+					  ContainersReady   True
+					  PodScheduled      True
+					Volumes:
+					  default-token-qkrl8:
+					    Type:        Secret (a volume populated by a Secret)
+					    SecretName:  default-token-qkrl8
+					    Optional:    false
+					QoS Class:       BestEffort
+					Node-Selectors:  <none>
+					Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s
+							 node.kubernetes.io/unreachable:NoExecute for 300s
+					Events:
+					  Type    Reason     Age    From               Message
+					  ----    ------     ----   ----               -------
+					  Normal  Scheduled  10m    default-scheduler  Successfully assigned default/kubernetes-bootcamp-5b48cfdcbd-jcxrp to minikube
+					  Normal  Pulled     9m56s  kubelet, minikube  Container image "gcr.io/google-samples/kubernetes-bootcamp:v1" already present on machine
+					  Normal  Created    9m56s  kubelet, minikube  Created container kubernetes-bootcamp
+					  Normal  Started    9m55s  kubelet, minikube  Started container kubernetes-bootcamp
+
+
+$	kubectl get pods -l app=v1
+-->
+					NAME                                   READY   STATUS    RESTARTS   AGE
+					kubernetes-bootcamp-5b48cfdcbd-jcxrp   1/1     Running   0          12m
+
+
+
+Pas de services 
+on ne peut pas acceder au app outside cluster
+
+$ curl $(minikube ip):$NODE_PORT
+curl: (7) Failed to connect to 172.17.0.122 port 30593: Connection refused
+
+But still Running
+
+$ kubectl exec -ti $POD_NAME curl localhost:8080
+Hello Kubernetes bootcamp! | Running on: kubernetes-bootcamp-5b48cfdcbd-jcxrp | v=1
+
+
+
+
+

@@ -1,0 +1,91 @@
+#####################       namespaces      #################################
+
+
+1-	https://kubernetes.io/docs/tasks/administer-cluster/namespaces/#viewing-namespaces
+
+
+##############################################################################
+
+Abtraction utilisé par k8s pour prendre en charge plusieurs clusters virtuels sur le meme cluster physique.
+
+
+Create the development namespace using kubectl.
+
+$	kubectl create -f https://k8s.io/examples/admin/namespace-dev.json
+
+And then let’s create the production namespace using kubectl.
+
+$	kubectl create -f https://k8s.io/examples/admin/namespace-prod.json
+
+
+$	kubectl get namespaces --show-labels
+						NAME          STATUS    AGE       LABELS
+						default       Active    32m       <none>
+						development   Active    29s       name=development
+						production    Active    23s       name=production
+
+
+=> A Kubernetes namespace provides the scope for Pods, Services, and Deployments in the cluster.
+
+
+
+
+$	kubectl config set-context dev --namespace=development --cluster=kubernetes-admin@kubernetes --user=kubernetes-admin@kubernetes
+OR
+$	kubectl config set-context dev --namespace=development --cluster=minikube --user=minikube
+### prod namespace
+$	kubectl config set-context prod --namespace=production --cluster=kubernetes-admin@kubernetes --user=kubernetes-admin@kubernetes
+OR
+$	kubectl config set-context prod --namespace=production --cluster=minikube --user=minikube
+
+
+$	master $ kubectl config view
+						apiVersion: v1
+						clusters:
+						- cluster:
+						    certificate-authority-data: REDACTED
+						    server: https://172.17.0.92:6443
+						  name: kubernetes
+						contexts:
+						- context:
+						    cluster: kubernetes-admin@kubernetes
+						    namespace: development
+						    user: kubernetes-admin@kubernetes
+						  name: dev
+						- context:
+						    cluster: kubernetes
+						    user: kubernetes-admin
+						  name: kubernetes-admin@kubernetes
+						- context:
+						    cluster: kubernetes-admin@kubernetes
+						    namespace: production
+						    user: kubernetes-admin@kubernetes
+						  name: prod
+						current-context: dev
+						kind: Config
+						preferences: {}
+						users:
+						- name: kubernetes-admin
+						  user:
+						    client-certificate-data: REDACTED
+						    client-key-data: REDACTED
+
+
+
+
+
+### dev mode
+$ kubectl config use-context dev
+$ kubectl run nginx --image=nginx
+$ kubectl scale deployments/nginx --replicas=2
+$ kubectl get deployment
+						NAME    READY   UP-TO-DATE   AVAILABLE   AGE
+						nginx   2/2     2            2           9m20s
+$ kubectl get pods
+						NAME                     READY   STATUS    RESTARTS   AGE
+						nginx-7bb7cd8db5-qdt2s   1/1     Running   0          9m29s
+						nginx-7bb7cd8db5-xt7jt   1/1     Running   0          59s
+#### prod mode
+
+
+
